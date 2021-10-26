@@ -73,6 +73,18 @@ const showEmployees = () => {
     });
 }
 const addEmployee = () => {
+
+    const inquirerEmployees = [];
+    const inquirerRoles = [];
+    
+    employees.forEach(employee => {
+        inquirerEmployees.push(employee.first_name + " " + employee.last_name);
+    })
+
+    roles.forEach(role => {
+        inquirerRoles.push(role.title);
+    });
+
     inquirer.prompt([
         {
             type: 'input',
@@ -88,13 +100,13 @@ const addEmployee = () => {
             type: 'list',
             message: "Role: ",
             name: 'role',
-            choices: ['Sales Lead', 'Lead Engineer', 'Account Manager', 'Lawyer']
+            choices: [...inquirerRoles]
         },
         {
             type: 'list',
             message: "Manager in charge: ",
             name: 'manager',
-            choices: ['John Doe', 'Ashley Rodriguez', 'Kunal Singh', 'Tom Allen', 'No Manager']
+            choices: [...inquirerEmployees, 'No Manager']
         },
     ])
     .then(data => {
@@ -104,7 +116,6 @@ const addEmployee = () => {
         roles.forEach(role => {
             if (role.title.toUpperCase() === data.role.toUpperCase()) {
                 roleId = parseInt(role.id);
-                console.log(roleId);
             }
         })
 
@@ -128,18 +139,30 @@ const addEmployee = () => {
     });
 }
 const updateEmployee = () => {
+
+    const inquirerEmployees = [];
+    const inquirerRoles = [];
+    
+    employees.forEach(employee => {
+        inquirerEmployees.push(employee.first_name + " " + employee.last_name);
+    })
+
+    roles.forEach(role => {
+        inquirerRoles.push(role.title);
+    });
+
     inquirer.prompt([
         {
             type: 'list',
             message: "Employee's role you want to update: ",
             name: 'name',
-            choices: ['John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik']
+            choices: [...inquirerEmployees]
         },
         {
             type: 'list',
             message: "Role you want to assign to the employee: ",
             name: 'role',
-            choices: ['Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer']
+            choices: [...inquirerRoles]
         },
     ])
     .then(data => {
@@ -155,7 +178,6 @@ const updateEmployee = () => {
         roles.forEach(role => {
             if (role.title.toUpperCase() === data.role.toUpperCase()) {
                 roleId = parseInt(role.id);
-                console.log(roleId);
             }
         })
 
@@ -177,6 +199,13 @@ const showRoles = () => {
     });
 }
 const addRole = () => {
+    
+    const inquirerRoles = [];
+    
+    roles.forEach(role => {
+        inquirerRoles.push(role.title);
+    });
+
     inquirer.prompt([
         {
             type: 'input',
@@ -192,7 +221,7 @@ const addRole = () => {
             type: 'list',
             message: "Department in which the Role belongs to: ",
             name: 'role_department',
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
+            choices: [...inquirerRoles]
         },
     ])
     .then(data => {
