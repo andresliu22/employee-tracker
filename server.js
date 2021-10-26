@@ -3,7 +3,7 @@ const routes = require('./routes/index.js');
 const inquirer = require('inquirer');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -81,7 +81,25 @@ const addEmployee = () => {
         console.log(data);
     });
 }
-const updateEmployee = () => {}
+const updateEmployee = () => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            message: "Employee's role you want to update: ",
+            name: 'employee',
+            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
+        },
+        {
+            type: 'list',
+            message: "Role you want to assign to the employee: ",
+            name: 'role',
+            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
+        },
+    ])
+    .then(data => {
+        console.log(data);
+    });
+}
 const showRoles = () => {}
 const addRole = () => {
     inquirer.prompt([
