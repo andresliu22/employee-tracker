@@ -23,7 +23,7 @@ const mainPrompt = () => {
             message: "What would you like to do?",
             name: "choice",
             choices: ['View All Employees', 'Add Employee', 'Update Employee Role',
-             'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+             'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
         }
     ])
     .then(data => {
@@ -48,6 +48,8 @@ const mainPrompt = () => {
                 break;
             case 'Add Department':
                 addDepartment();
+                break;
+            case 'Quit':
                 break;
             default:
                 console.log('Error, not a given choice!');
@@ -130,18 +132,38 @@ const updateEmployee = () => {
         {
             type: 'list',
             message: "Employee's role you want to update: ",
-            name: 'employee',
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
+            name: 'name',
+            choices: ['John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik']
         },
         {
             type: 'list',
             message: "Role you want to assign to the employee: ",
             name: 'role',
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
+            choices: ['Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer']
         },
     ])
     .then(data => {
-        console.log(data);
+        let employeeId;
+        let roleId;
+
+        employees.forEach(employee => {
+            if (`${employee.first_name.toUpperCase()} ${employee.last_name.toUpperCase()}` === data.name.toUpperCase()) {
+                employeeId = parseInt(employee.id);
+            }
+        })
+
+        roles.forEach(role => {
+            if (role.title.toUpperCase() === data.role.toUpperCase()) {
+                roleId = parseInt(role.id);
+                console.log(roleId);
+            }
+        })
+
+        db.query(`UPDATE employee SET role_id = ${roleId} WHERE id = ${employeeId};`, function(error, resolve) {
+            error ? console.log(error) : console.log("Employee Updated!");
+            getEmployees();
+            mainPrompt();
+        })
     });
 }
 const showRoles = () => {
