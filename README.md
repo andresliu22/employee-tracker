@@ -33,6 +33,7 @@ These instructions will get you a copy of the project up and running on your loc
 * Git
 * Node.js
 * NPM
+* Express
 * Inquirer
 * MySQL
 
@@ -40,13 +41,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 * Fork the project to get your own copy of the repository.
 * Clone the repository.
-* Follow the steps above to generate your own Team Profile Website.
+* Follow the steps above to manage your employee's database.
 
 ## Built With
 
 * [Javascript](https://developer.mozilla.org/en-US/docs/Web/javascript)
 * [Node.js](https://nodejs.org/en/)
 * [NPM](https://docs.npmjs.com/)
+* [Express](https://expressjs.com/)
 * [Inquirer](https://www.npmjs.com/package/inquirer)
 * [MySQL](https://www.mysql.com/)
 
