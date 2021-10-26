@@ -51,7 +51,6 @@ const mainPrompt = () => {
                 addDepartment();
                 break;
             case 'Quit':
-                console.log('Quit');
                 exit();
                 break;
             default:
