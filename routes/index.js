@@ -7,5 +7,4 @@ router.use('/department', departmentRouter);
 router.use('/role', roleRouter);
 router.use('/employee', employeeRouter);
 
-
 module.exports = router;

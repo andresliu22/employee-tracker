@@ -1,6 +1,8 @@
 const express = require('express');
 const routes = require('./routes/index.js');
 const inquirer = require('inquirer');
+const consoleTable = require('console.table');
+const db = require('./config/connection');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -9,7 +11,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
-
 
 const mainPrompt = () => {
     inquirer.prompt([
@@ -46,12 +47,25 @@ const mainPrompt = () => {
                 break;
             default:
                 console.log('Error, not a given choice!');
-
         }
     })
 }
 
-const showEmployees = () => {}
+const showEmployees = () => {
+    const departmentQuery = 'SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.id = b.id';
+    const roleQuery = `SELECT a.id, a.first_name, a.last_name, manager_id, b.title as role, b.salary, b.name as department FROM employee as a JOIN (${departmentQuery}) as b ON a.id = b.id`;
+    const employeeQuery = `SELECT a.id, a.first_name, a.last_name, a.role, a.salary, a.department, b.first_name as manager FROM (${roleQuery}) as a JOIN employee as b ON a.manager_id = b.id`;
+    const employeeQuery2 = `SELECT a.id, a.first_name, a.last_name, a.role, a.salary, a.department, NULL as manager FROM (${roleQuery}) as a WHERE a.manager_id is NULL`
+    
+    db.query(`${employeeQuery} UNION ${employeeQuery2} order by id;`, function(error, resolves) {
+        if (error) {
+            return console.log(error);
+        } else {
+            console.log(consoleTable.getTable(resolves));
+        }
+        mainPrompt();
+    });
+}
 const addEmployee = () => {
     inquirer.prompt([
         {
@@ -100,7 +114,16 @@ const updateEmployee = () => {
         console.log(data);
     });
 }
-const showRoles = () => {}
+const showRoles = () => {
+    db.query('SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.id = b.id;', function(error, resolves) {
+        if (error) {
+            return console.log(error);
+        } else {
+            console.log(consoleTable.getTable(resolves));
+        }
+        mainPrompt();
+    });
+}
 const addRole = () => {
     inquirer.prompt([
         {
@@ -124,7 +147,16 @@ const addRole = () => {
         console.log(data);
     });
 }
-const showDepartments = () => {}
+const showDepartments = () => {
+    db.query('SELECT * FROM department;', function(error, resolves) {
+        if (error) {
+            return console.log(error);
+        } else {
+            console.log(consoleTable.getTable(resolves));
+        }
+        mainPrompt();
+    });
+}
 const addDepartment = () => {
     inquirer.prompt([
         {
@@ -137,8 +169,6 @@ const addDepartment = () => {
         console.log(data);
     });
 }
-
-
 
 
 mainPrompt();
