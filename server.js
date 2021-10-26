@@ -3,6 +3,7 @@ const routes = require('./routes/index.js');
 const inquirer = require('inquirer');
 const consoleTable = require('console.table');
 const db = require('./config/connection');
+const { exit } = require('process');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -50,6 +51,8 @@ const mainPrompt = () => {
                 addDepartment();
                 break;
             case 'Quit':
+                console.log('Quit');
+                exit();
                 break;
             default:
                 console.log('Error, not a given choice!');
