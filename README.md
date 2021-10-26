@@ -26,7 +26,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Walkthrough Video
 
-* [Link To Video](https://watch.screencastify.com/v/faibh3KIX91Uv0hdXc5l)
+* [Link To Video](https://watch.screencastify.com/v/pY5V7yvZvn5eEP0GD1Ej)
 
 ## Prerequisites
 

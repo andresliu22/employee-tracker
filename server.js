@@ -200,10 +200,10 @@ const showRoles = () => {
 }
 const addRole = () => {
     
-    const inquirerRoles = [];
+    const inquirerDepartments = [];
     
-    roles.forEach(role => {
-        inquirerRoles.push(role.title);
+    departments.forEach(department => {
+        inquirerDepartments.push(department.name);
     });
 
     inquirer.prompt([
@@ -221,7 +221,7 @@ const addRole = () => {
             type: 'list',
             message: "Department in which the Role belongs to: ",
             name: 'role_department',
-            choices: [...inquirerRoles]
+            choices: [...inquirerDepartments]
         },
     ])
     .then(data => {
@@ -229,7 +229,6 @@ const addRole = () => {
         departments.forEach(department => {
             if (department.name.toUpperCase() === data.role_department.toUpperCase()) {
                 departmentId = parseInt(department.id);
-                console.log(departmentId);
             }
         });
 
