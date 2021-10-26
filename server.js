@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
 
-// Crate global variables
+// Create global variables
 var departments;
 var roles;
 var employees;
