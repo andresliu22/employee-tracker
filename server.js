@@ -12,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
 
+var departments;
+var roles;
+var employees;
+
 const mainPrompt = () => {
     inquirer.prompt([
         {
@@ -52,8 +56,8 @@ const mainPrompt = () => {
 }
 
 const showEmployees = () => {
-    const departmentQuery = 'SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.id = b.id';
-    const roleQuery = `SELECT a.id, a.first_name, a.last_name, manager_id, b.title as role, b.salary, b.name as department FROM employee as a JOIN (${departmentQuery}) as b ON a.id = b.id`;
+    const departmentQuery = 'SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.department_id = b.id';
+    const roleQuery = `SELECT a.id, a.first_name, a.last_name, manager_id, b.title as role, b.salary, b.name as department FROM employee as a JOIN (${departmentQuery}) as b ON a.role_id = b.id`;
     const employeeQuery = `SELECT a.id, a.first_name, a.last_name, a.role, a.salary, a.department, b.first_name as manager FROM (${roleQuery}) as a JOIN employee as b ON a.manager_id = b.id`;
     const employeeQuery2 = `SELECT a.id, a.first_name, a.last_name, a.role, a.salary, a.department, NULL as manager FROM (${roleQuery}) as a WHERE a.manager_id is NULL`
     
@@ -88,11 +92,37 @@ const addEmployee = () => {
             type: 'list',
             message: "Manager in charge: ",
             name: 'manager',
-            choices: ['John Doe', 'Ashley Rodriguez', 'Kunal Singh', 'Tom Allen']
+            choices: ['John Doe', 'Ashley Rodriguez', 'Kunal Singh', 'Tom Allen', 'No Manager']
         },
     ])
     .then(data => {
-        console.log(data);
+        let roleId;
+        let managerId;
+
+        roles.forEach(role => {
+            if (role.title.toUpperCase() === data.role.toUpperCase()) {
+                roleId = parseInt(role.id);
+                console.log(roleId);
+            }
+        })
+
+        if (data.manager !== "No Manager") {
+            employees.forEach(employee => {
+                if (`${employee.first_name.toUpperCase()} ${employee.last_name.toUpperCase()}` === data.manager.toUpperCase()) {
+                    managerId = parseInt(employee.id);
+                }
+            })
+        } else {
+            managerId = null;
+        }
+        
+
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${data.first_name}", "${data.last_name}", ${roleId}, ${managerId});`, function (error, resolve){
+            error ? console.log(error) : console.log("Employee Added");
+            getEmployees();
+            mainPrompt();
+        });
+        
     });
 }
 const updateEmployee = () => {
@@ -115,7 +145,7 @@ const updateEmployee = () => {
     });
 }
 const showRoles = () => {
-    db.query('SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.id = b.id;', function(error, resolves) {
+    db.query('SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.department_id = b.id;', function(error, resolves) {
         if (error) {
             return console.log(error);
         } else {
@@ -144,7 +174,20 @@ const addRole = () => {
         },
     ])
     .then(data => {
-        console.log(data);
+        let departmentId;
+        departments.forEach(department => {
+            if (department.name.toUpperCase() === data.role_department.toUpperCase()) {
+                departmentId = parseInt(department.id);
+                console.log(departmentId);
+            }
+        });
+
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${data.role_name}", ${parseFloat(data.role_salary)}, ${parseInt(departmentId)});`, function (error, resolve){
+            error ? console.log(error) : console.log("Role Added");
+            getRoles();
+            mainPrompt();
+        });
+        
     });
 }
 const showDepartments = () => {
@@ -166,10 +209,50 @@ const addDepartment = () => {
         },
     ])
     .then(data => {
-        console.log(data);
+        db.query(`INSERT INTO department (name) VALUES ("${data.department_name}");`, function (error, resolve){
+            error ? console.log(error) : console.log("Department Added");
+            getDepartments();
+            mainPrompt();
+        });
     });
 }
 
+const getDepartments = () => {
+    db.query('SELECT * FROM department;', function(error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            departments = data;
+        }
+    })
+}
 
+const getRoles = () => {
+    db.query('SELECT * FROM role;', function(error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            roles = data;
+        }
+    })
+}
+
+const getEmployees = () => {
+    db.query('SELECT * FROM employee;', function(error, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            employees = data;
+        }
+    })
+}
+
+const getData = () => {
+    getDepartments();
+    getRoles();
+    getEmployees();
+}
+
+getData();
 mainPrompt();
 app.listen(PORT, () => console.log(`Now listening to PORT: ${PORT}`));
