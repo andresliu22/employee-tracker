@@ -13,10 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
 
+// Crate global variables
 var departments;
 var roles;
 var employees;
 
+// Main prompt with questions
 const mainPrompt = () => {
     inquirer.prompt([
         {
@@ -59,6 +61,7 @@ const mainPrompt = () => {
     })
 }
 
+// Display employees table with department and roles
 const showEmployees = () => {
     const departmentQuery = 'SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.department_id = b.id';
     const roleQuery = `SELECT a.id, a.first_name, a.last_name, manager_id, b.title as role, b.salary, b.name as department FROM employee as a JOIN (${departmentQuery}) as b ON a.role_id = b.id`;
@@ -74,6 +77,8 @@ const showEmployees = () => {
         mainPrompt();
     });
 }
+
+// Add Employee
 const addEmployee = () => {
 
     const inquirerEmployees = [];
@@ -140,6 +145,8 @@ const addEmployee = () => {
         
     });
 }
+
+// Update employee's role
 const updateEmployee = () => {
 
     const inquirerEmployees = [];
@@ -190,6 +197,8 @@ const updateEmployee = () => {
         })
     });
 }
+
+// Display existing roles
 const showRoles = () => {
     db.query('SELECT a.id, a.title, a.salary, b.name FROM role AS a JOIN department AS b ON a.department_id = b.id;', function(error, resolves) {
         if (error) {
@@ -200,6 +209,8 @@ const showRoles = () => {
         mainPrompt();
     });
 }
+
+// Add new role
 const addRole = () => {
     
     const inquirerDepartments = [];
@@ -242,6 +253,8 @@ const addRole = () => {
         
     });
 }
+
+// Display Departments table
 const showDepartments = () => {
     db.query('SELECT * FROM department;', function(error, resolves) {
         if (error) {
@@ -252,6 +265,8 @@ const showDepartments = () => {
         mainPrompt();
     });
 }
+
+// Add a new department
 const addDepartment = () => {
     inquirer.prompt([
         {
@@ -269,6 +284,7 @@ const addDepartment = () => {
     });
 }
 
+// Get all departments
 const getDepartments = () => {
     db.query('SELECT * FROM department;', function(error, data) {
         if (error) {
@@ -279,6 +295,7 @@ const getDepartments = () => {
     })
 }
 
+// Get all roles
 const getRoles = () => {
     db.query('SELECT * FROM role;', function(error, data) {
         if (error) {
@@ -289,6 +306,7 @@ const getRoles = () => {
     })
 }
 
+// Get all employees
 const getEmployees = () => {
     db.query('SELECT * FROM employee;', function(error, data) {
         if (error) {
@@ -299,6 +317,7 @@ const getEmployees = () => {
     })
 }
 
+// Run all the getters
 const getData = () => {
     getDepartments();
     getRoles();
@@ -307,4 +326,5 @@ const getData = () => {
 
 getData();
 mainPrompt();
+
 app.listen(PORT, () => console.log(`Now listening to PORT: ${PORT}`));
